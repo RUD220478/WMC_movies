@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movies Database</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/x-icon" href="/images/favico.png">
+</head>
+<body>
+  <header>
+    <h1>Movies</h1>
+  </header>
+
+  <main>
+    <div id="status" class="status">Load data...</div>
+    <!-- Input Section -->
+    <section class="input-section">
+      <input type="text" id="movie-title" placeholder="Name of the movie"/>
+      <input type="text" id="movie-year" placeholder="Year of release"/>
+      <!-- Listener -->
+      <button onclick="addClick()" id="add-btn">Add Movie</button>
+    </section>
+
+    <div class="table-wrapper">
+      <table id="movies-table" class="table" aria-describedby="status">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Year</th>
+            <th>Rating</th>
+            <th>Remove</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Zeilen werden per JS eingefügt -->
+        </tbody>
+      </table>
+    </div>
+  </main>
+  <script src="./app.js"></script>
+</body>
+</html>
