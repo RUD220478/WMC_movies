@@ -1,6 +1,5 @@
 body {
   font-family: Arial, sans-serif;
-
   margin: 0;
   background: #f7f7f8;
   color: #111;
@@ -9,7 +8,7 @@ body {
 header {
   background: #111;
   color: #fff;
-  padding: 15px;
+  padding: 15px 20px;
 }
 
 h1 {
@@ -20,36 +19,18 @@ h1 {
 main {
   padding: 20px;
   max-width: 900px;
-  margin: auto;
+  margin: 0 auto;
 }
 
 .status {
   margin-bottom: 10px;
   font-size: 14px;
   color: #555;
+  min-height: 1.2em;
+  /* Platz reservieren, damit nix springt */
 }
 
-.table-wrapper {
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  overflow-x: auto;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-th, td {
-  padding: 10px;
-  border-bottom: 1px solid #eee;
-  text-align: left;
-}
-
-tr:hover {
-  background: #f9fbff;
-}
+/* Input-Zeile */
 
 .input-section {
   display: flex;
@@ -57,37 +38,227 @@ tr:hover {
   margin-bottom: 16px;
 }
 
+.input-section input {
+  flex: 1;
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+/* Tabelle */
+
+.table-wrapper {
+  background: #ffffffcc;
+  /* leicht transparent über dem Hintergrund */
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  /* Rundung auch für Kopfzeile */
+  backdrop-filter: blur(6px);
+  /* leichter Glassmorphism-Effekt */
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+/* Kopfzeile mit Verlauf */
+th {
+  padding: 10px;
+  border-bottom: 1px solid #e0e4f0;
+  text-align: left;
+  background: linear-gradient(90deg, #0078ff, #4c8dff);
+  color: #fff;
+  font-weight: 600;
+}
+
+/* Zebra-Style Zeilen */
+tbody tr:nth-child(odd) {
+  background: #f8faff;
+}
+
+tbody tr:nth-child(even) {
+  background: #ffffff;
+}
+
+tbody tr:hover {
+  background: #e7f1ff;
+}
+
+/* Zellen */
+td {
+  padding: 10px;
+  border-bottom: 1px solid #e5e7f0;
+}
+
+/* Buttons */
+
+button {
+  font-size: 13px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+
 #add-btn {
-  padding: 8px 16px;
   background: #0078ff;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-.delete-btn {
-  padding: 8px 16px;
-  background: #0078ff;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-.rate-btn {
-  padding: 8px 16px;
-  background: #f65936;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
+  color: #fff;
 }
 
 #add-btn:hover {
   background: #005fcc;
 }
 
-#delete-btn:hover {
-  background: #005fcc;
+.edit-btn {
+  background: #f5a623;
+  color: #fff;
+}
+
+.edit-btn:hover {
+  background: #d98b12;
+}
+
+.delete-btn {
+  background: #e53935;
+  color: #fff;
+}
+
+.delete-btn:hover {
+  background: #c62828;
+}
+
+/* Rating-Button, falls du ihn nutzt */
+
+.rate-btn {
+  background: #8e24aa;
+  color: #fff;
+}
+
+.rate-btn:hover {
+  background: #6a1b9a;
+}
+
+/* Weicher animierter Hintergrund hinter dem Inhalt */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: radial-gradient(circle at 0% 0%, #0078ff33, transparent 60%),
+    radial-gradient(circle at 100% 100%, #e5393533, transparent 60%);
+  animation: bg-move 18s ease-in-out infinite alternate;
+}
+
+/* Sanfte Bewegung der Farb-Flecken */
+@keyframes bg-move {
+  0% {
+    transform: translate3d(0, 0, 0);
+    filter: blur(0px);
+  }
+
+  50% {
+    transform: translate3d(-20px, 10px, 0);
+    filter: blur(2px);
+  }
+
+  100% {
+    transform: translate3d(20px, -10px, 0);
+    filter: blur(0px);
+  }
+}
+
+/* Container für animierte Punkte im Hintergrund */
+.floating-dots {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  overflow: hidden;
+}
+
+/* Einzelner Punkt */
+.floating-dot {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: rgba(0, 120, 255, 0.7);
+  box-shadow: 0 0 12px rgba(0, 120, 255, 0.8);
+  animation: float-dot 12s linear infinite;
+}
+
+/* Unterschiedliche Farben/Größen für Abwechslung */
+.floating-dot.dot-red {
+  background: rgba(229, 57, 53, 0.7);
+  box-shadow: 0 0 12px rgba(229, 57, 53, 0.9);
+}
+
+.floating-dot.dot-purple {
+  background: rgba(142, 36, 170, 0.7);
+  box-shadow: 0 0 12px rgba(142, 36, 170, 0.9);
+}
+
+.floating-dot.dot-small {
+  width: 8px;
+  height: 8px;
+}
+
+.floating-dot.dot-big {
+  width: 18px;
+  height: 18px;
+}
+
+/* Keyframes: Punkt bewegt sich*/
+@keyframes float-dot {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.3;
+  }
+
+  25% {
+    transform: translate3d(40vw, -10vh, 0) scale(1.1);
+    opacity: 0.6;
+  }
+
+  50% {
+    transform: translate3d(60vw, 30vh, 0) scale(0.9);
+    opacity: 0.4;
+  }
+
+  75% {
+    transform: translate3d(10vw, 50vh, 0) scale(1.2);
+    opacity: 0.7;
+  }
+
+  100% {
+    transform: translate3d(-10vw, -20vh, 0) scale(1);
+    opacity: 0.3;
+  }
+}
+
+/* Vertikales MOVIEDB-Label links */
+.vertical-brand {
+  position: fixed;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: 'Courier New', Courier, monospace, sans-serif;
+  font-size: 90px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: #444;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.vertical-brand span {
+  display: block;
 }

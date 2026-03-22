@@ -1,13 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Movies Database</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="icon" type="image/x-icon" href="/images/favico.png">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Movies Database</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" type="image/x-icon" href="/images/favico.png">
 </head>
+
 <body>
+  <!-- CSS Start -->
+  <div class="vertical-brand">
+    <span>M</span>
+    <span>O</span>
+    <span>V</span>
+    <span>I</span>
+    <span>E</span>
+    <span>D</span>
+    <span>B</span>
+  </div>
+  <div class="floating-dots">
+    <div class="floating-dot dot-small" style="top:10%; left:5%;  animation-duration: 16s;"></div>
+    <div class="floating-dot dot-big" style="top:30%; left:80%; animation-duration: 20s;"></div>
+    <div class="floating-dot dot-red" style="top:70%; left:20%; animation-duration: 18s;"></div>
+    <div class="floating-dot dot-purple" style="top:50%; left:60%; animation-duration: 22s;"></div>
+    <div class="floating-dot dot-small dot-red" style="top:85%; left:90%; animation-duration: 14s;"></div>
+  </div>
+  <!-- CSS END-->
   <header>
     <h1>Movies</h1>
   </header>
@@ -16,8 +36,9 @@
     <div id="status" class="status">Load data...</div>
     <!-- Input Section -->
     <section class="input-section">
-      <input type="text" id="movie-title" placeholder="Name of the movie"/>
-      <input type="text" id="movie-year" placeholder="Year of release"/>
+      <input type="text" id="movie-name" placeholder="Name of the movie" />
+      <input type="text" id="movie-year" placeholder="Year of release" />
+      <input type="text" id="movie-rating" placeholder="Rating 1-10" />
       <!-- Listener -->
       <button onclick="addClick()" id="add-btn">Add Movie</button>
     </section>
@@ -30,6 +51,7 @@
             <th>Title</th>
             <th>Year</th>
             <th>Rating</th>
+            <th>Edit</th>
             <th>Remove</th>
           </tr>
         </thead>
@@ -41,4 +63,5 @@
   </main>
   <script src="./app.js"></script>
 </body>
+
 </html>

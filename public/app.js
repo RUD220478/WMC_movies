@@ -17,41 +17,78 @@ async function fetchMovies() {
       const tdId = document.createElement("td");
       tdId.textContent = o.id;
 
-      const tdTitle = document.createElement("td");
-      tdTitle.textContent = o.title;
+      const tdName = document.createElement("td");
+      tdName.textContent = o.name;
 
       const tdYear = document.createElement("td");
       tdYear.textContent = o.year;
 
       const tdRating = document.createElement("td");
+      tdRating.textContent = o.rating;
 
-      // If movie has been rated, show the rating
-      if (o.rating != null) {
-        tdRating.textContent = o.rating;
-      } else {
-        // Otherwise show a Rate button
-        const rateBtn = document.createElement("button");
-        rateBtn.textContent = "Rate";
-        rateBtn.className = "rate-btn";
+      const editBtn = document.createElement("button");
+      editBtn.textContent = "Bearbeiten";
+      editBtn.className = "edit-btn";
 
-        rateBtn.onclick = async () => {
-          const rating = prompt(`Give a rating for ${o.title} (1–5):`);
-          // Error-Checking for input
-          if (Number.isNaN(rating) || rating < 1 || rating > 5) {
-            alert("Invalid. Please enter a number between 1 and 5.");
+      editBtn.onclick = () => {
+        // 1. Save original values in case user cancels (or for the inputs)
+        const origTitle = tdName.textContent;
+        const origYear = tdYear.textContent;
+        const origRating = tdRating.textContent;
+
+        // 2. Replace text with inputs
+        const nameInput = document.createElement("input");
+        nameInput.value = origTitle;
+        tdName.innerHTML = "";
+        tdName.appendChild(nameInput);
+
+        const yearInput = document.createElement("input");
+        yearInput.value = origYear;
+        tdYear.innerHTML = "";
+        tdYear.appendChild(yearInput);
+
+        // This part makes the Rating editable!
+        const ratingInput = document.createElement("input");
+        ratingInput.type = "number"; // Set type to number for better UX
+        ratingInput.value = origRating;
+        tdRating.innerHTML = "";
+        tdRating.appendChild(ratingInput);
+
+        // 3. Change button to "Save"
+        editBtn.textContent = "Save";
+
+        editBtn.onclick = async () => {
+          const newTitle = nameInput.value.trim();
+          const newYear = yearInput.value.trim();
+          const newRating = parseInt(ratingInput.value.trim());
+
+          // Validation
+          if (!newTitle || !newYear) {
+            alert("Title and year required");
             return;
           }
-          tdRating.textContent = rating;
-        };
-        tdRating.appendChild(rateBtn);
-      }
+          if (Number.isNaN(newRating) || newRating < 0 || newRating > 10) {
+            alert("Rating must be a number between 0 and 10");
+            return;
+          }
 
+          // 4. Send the updated data to the server
+          await updateMovie(o.id, {
+            name: newTitle,
+            year: newYear,
+            rating: newRating,
+          });
+
+          // 5. Refresh the list to show updated data and reset buttons
+          await fetchMovies();
+        };
+      };
       const delBtn = document.createElement("button");
       delBtn.textContent = "Delete";
       delBtn.className = "delete-btn";
 
       delBtn.onclick = async () => {
-        if (!confirm(`Remove movie ${o.title}?`)) return;
+        if (!confirm(`Remove movie ${o.name}?`)) return;
         await deleteMovie(o.id);
         await fetchMovies();
       };
@@ -59,9 +96,11 @@ async function fetchMovies() {
       const tdRemove = document.createElement("td");
       tdRemove.appendChild(delBtn);
 
-      tr.append(tdId, tdTitle, tdYear, tdRating, tdRemove);
-      tbody.appendChild(tr);
+      const tdEdit = document.createElement("td");
+      tdEdit.appendChild(editBtn);
 
+      tr.append(tdId, tdName, tdYear, tdRating, tdEdit, tdRemove);
+      tbody.appendChild(tr);
     }
 
     statusEl.textContent = `Loaded a list of ${movies.length} movies`;
@@ -71,15 +110,13 @@ async function fetchMovies() {
   }
 }
 
-
-
-async function addMovie(title, year) {
+async function addMovie(name, rating, year) {
   const statusEl = document.getElementById("status");
   try {
     const res = await fetch("/movies", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ title, year }),
+      body: JSON.stringify({ name, rating, year }),
     });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     await fetchMovies();
@@ -91,25 +128,47 @@ async function addMovie(title, year) {
 }
 
 async function addClick() {
-  const titleInput   = document.getElementById("movie-title");
-  const title = titleInput.value.trim();
+  const nameInput = document.getElementById("movie-name");
+  const name = nameInput.value.trim();
+  const ratingInput = document.getElementById("movie-rating");
+  const rating = ratingInput.value.trim();
   const yearInput = document.getElementById("movie-year");
   const year = yearInput.value.trim();
   const button = document.getElementById("add-btn");
   const statusEl = document.getElementById("status");
 
-  if (!title || !year) {
-    statusEl.textContent = "Movie title and year of release required.";
+  if (!name || !year) {
+    statusEl.textContent = "Movie name and year of release required.";
     return;
   }
 
   button.disabled = true;
-  await addMovie(title, year);
+  await addMovie(name, rating, year);
   button.disabled = false;
 
-  titleInput.value = "";
+  nameInput.value = "";
   yearInput.value = "";
-  titleInput.focus();
+  ratingInput.value = "";
+  nameInput.focus();
+}
+
+async function updateMovie(id, data) {
+  const statusEl = document.getElementById("status");
+  try {
+    const res = await fetch(`/movies/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) {
+      const msg = await res.json().catch(() => ({}));
+      throw new Error(msg.error || `HTTP ${res.status}`);
+    }
+    statusEl.textContent = `Movie ${id} aktualisiert.`;
+  } catch (err) {
+    console.error(err);
+    statusEl.textContent = `Fehler beim Aktualisieren: ${err.message}`;
+  }
 }
 
 async function deleteMovie(id) {

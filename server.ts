@@ -3,6 +3,7 @@ import process from "node:process";
 import { fromFileUrl } from "@std/path";
 import { dirname } from "@std/path";
 import path from "node:path";
+import { PrismaClient } from "./generated/client.ts";
 
 const __dirname = dirname(fromFileUrl(import.meta.url));
 const app = express();
@@ -11,68 +12,91 @@ app.use(express.json());
 
 app.use(express.static(path.join(__dirname, "public")));
 
-const movies = [
-  { id: 1, title: "Dracula", year: 2010, rating: null },
-  { id: 2, title: "Harry Potter", year: 2005, rating: null },
-  { id: 3, title: "Anna Meier", year: 2003, rating: null }
-];
+const prisma = new PrismaClient();
+
+const movies = await prisma.movie.findMany();
 
 app.get("/", (_req: Request, res: Response) => {
   res.send("hello, world.");
 });
 
-app.get("/movies", (req: Request, res: Response) => {
+app.get("/movies", async (req: Request, res: Response) => {
+  const movies = await prisma.movie.findMany();
   res.json(movies);
 });
 
-app.get("/movies/:id", (req: Request, res: Response) => {
+app.get("/movies/:id", async (req: Request, res: Response) => {
   const id = parseInt(req.params.id);
-  const title = movies.find(o => o.id === id)
-
-  if (!title) {
-    return res.status(404).json({ error: "Movie not found" });
-  }
-
-  res.json(title);
-});
-
-app.post("/movies", (req: Request, res: Response) => {
-  const { title, year } = req.body;
-
-  //
-  if (!title || !year) {
-    return res.status(400).json({ error: "Movie title and year of release are required!" });
-  }
-  // ID
-  const newId = movies.length ? movies[movies.length - 1].id + 1 : 1;
-
-  const newMovie = { id: newId, title, year, rating: null };
-  movies.push(newMovie);
-  res.status(201).json(newMovie);
-});
-
-app.patch("/movies/:id/rating", (req: Request, res: Response) => {
-  const id = parseInt(req.params.id);
-  const { rating } = req.body;
-  const movie = movies.find(m => m.id === id);
+  const movie = await prisma.movie.findUnique({
+    where: { id }
+  });
   if (!movie) {
     return res.status(404).json({ error: "Movie not found" });
   }
-  movie.rating = rating;
   res.json(movie);
 });
 
-app.delete("/movies/:id", (req: Request, res: Response) => {
+app.put("/movies/:id", async (req: Request, res: Response) => {
   const id = parseInt(req.params.id);
-  const pos = movies.findIndex(s => s.id === id);
-
-  if (pos === -1) {
+  const { name, year } = req.body;
+  if (!name || !year) {
+    return res.status(400).json({ error: "Name and year are required!" });
+  }
+  try {
+    const updatedMovie = await prisma.movie.update({
+      where: { id },
+      data: { name, year: Number(year) }
+    });
+    res.json(updatedMovie);
+  } catch {
     return res.status(404).json({ error: "Movie not found" });
   }
-  // Removes the movie at the pos position
-  movies.splice(pos, 1);
-  // No content is returned
-  return res.status(204).send(); // No Content
+});
+
+app.post("/movies", async (req: Request, res: Response) => {
+  const { name, rating, year } = req.body;
+  console.log("Received POST /movies with data:", req.body);
+  if (!name || !year) {
+    return res.status(400).json({ error: "Name, rating and year are required!" });
+  }
+  const newMovie = await prisma.movie.create({
+    data: { name, year: Number(year), rating: Number(rating) }
+  });
+  res.status(201).json(newMovie);
+});
+
+app.patch("/movies/:id", async (req: Request, res: Response) => {
+  const id = parseInt(req.params.id);
+  const { name, rating, year } = req.body;
+
+  const data: { name?: string; rating?: number; year?: number } = {};
+
+  if (name !== undefined) data.name = name;
+  if (rating !== undefined) data.rating = rating;
+  if (year !== undefined) data.year = Number(year);
+
+  try {
+    const updatedMovie = await prisma.movie.update({
+      where: { id },
+      data
+    });
+
+    res.json(updatedMovie);
+  } catch {
+    return res.status(404).json({ error: "Movie not found" });
+  }
+});
+
+app.delete("/movies/:id", async (req: Request, res: Response) => {
+  const id = parseInt(req.params.id);
+  try {
+    await prisma.movie.delete({
+      where: { id }
+    });
+    return res.status(204).send(); // No Content
+  } catch {
+    return res.status(404).json({ error: "Movie not found" });
+  }
 });
 
 app.listen(port, () => {

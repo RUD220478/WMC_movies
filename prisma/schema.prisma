@@ -1,0 +1,17 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated"
+  runtime = "deno"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:../movie.db"
+}
+
+model Movie {
+  id     Int    @id @default(autoincrement())
+  name   String
+  year Int
+  rating Float
+}
