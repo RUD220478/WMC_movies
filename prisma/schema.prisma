@@ -5,8 +5,10 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:../movie.db"
+  //provider = "sqlite"
+  //url      = "file:../movie.db"
+  provider = "postgresql"
+  url = env("DATABASE_URL")
 }
 
 model Movie {

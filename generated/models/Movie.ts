@@ -1028,6 +1028,7 @@ export type MovieCreateManyArgs<ExtArgs extends runtime.Types.Extensions.Interna
    * The data used to create many Movies.
    */
   data: Prisma.MovieCreateManyInput | Prisma.MovieCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1046,6 +1047,7 @@ export type MovieCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extension
    * The data used to create many Movies.
    */
   data: Prisma.MovieCreateManyInput | Prisma.MovieCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**

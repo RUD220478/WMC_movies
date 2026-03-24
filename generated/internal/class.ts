@@ -23,7 +23,7 @@ const config: runtime.GetPrismaClientConfig = {
       "value": "prisma-client"
     },
     "output": {
-      "value": "/home/mrudic/Documents/RUD220478_git/WMC_movies/generated",
+      "value": "/home/mrudic/Documents/RUD220478_git/WMC_movies-1/generated",
       "fromEnvVar": null
     },
     "config": {
@@ -33,12 +33,12 @@ const config: runtime.GetPrismaClientConfig = {
     "binaryTargets": [
       {
         "fromEnvVar": null,
-        "value": "debian-openssl-3.0.x",
+        "value": "rhel-openssl-3.0.x",
         "native": true
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "/home/mrudic/Documents/RUD220478_git/WMC_movies/prisma/schema.prisma",
+    "sourceFilePath": "/home/mrudic/Documents/RUD220478_git/WMC_movies-1/prisma/schema.prisma",
     "isCustomOutput": true
   },
   "relativePath": "../prisma",
@@ -47,17 +47,17 @@ const config: runtime.GetPrismaClientConfig = {
   "datasourceNames": [
     "db"
   ],
-  "activeProvider": "sqlite",
+  "activeProvider": "postgresql",
   "inlineDatasources": {
     "db": {
       "url": {
-        "fromEnvVar": null,
-        "value": "file:../movie.db"
+        "fromEnvVar": "DATABASE_URL",
+        "value": null
       }
     }
   },
-  "inlineSchema": "generator client {\n  provider = \"prisma-client\"\n  output   = \"../generated\"\n  runtime  = \"deno\"\n}\n\ndatasource db {\n  provider = \"sqlite\"\n  url      = \"file:../movie.db\"\n}\n\nmodel Movie {\n  id     Int    @id @default(autoincrement())\n  name   String\n  year   Int\n  rating Float\n}\n",
-  "inlineSchemaHash": "abfe06c67f34ce3c609b09cad89cc984f1d83902981a65315420903f742fc4ce",
+  "inlineSchema": "generator client {\n  provider = \"prisma-client\"\n  output   = \"../generated\"\n  runtime  = \"deno\"\n}\n\ndatasource db {\n  //provider = \"sqlite\"\n  //url      = \"file:../movie.db\"\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel Movie {\n  id     Int    @id @default(autoincrement())\n  name   String\n  year   Int\n  rating Float\n}\n",
+  "inlineSchemaHash": "fdf77183501be86beef9ca5630da8f197b20f801b4d73521c9071a23cc4ab41b",
   "copyEngine": true,
   "runtimeDataModel": {
     "models": {},
